@@ -26,7 +26,7 @@ forge create --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY src/fau
 
 Assign the contract address to `REACTIVE_FAUCET_ADDR`.
 
-Lastly deploy the listener contract:
+Lastly, deploy the listener contract:
 
 ```
 forge create --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY src/faucet/ReactiveFaucetListener.sol:ReactiveFaucetListener --constructor-args $SYSTEM_CONTRACT_ADDR $REACTIVE_FAUCET_L1_ADDR $REACTIVE_FAUCET_ADDR
