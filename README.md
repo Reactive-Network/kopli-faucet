@@ -2,7 +2,7 @@
 
 ## Overview
 
-This demo demonstrates a Reactive Faucet system that operates between Layer 1 (L1) and the Reactive Network. It enables users to request funds from a faucet contract deployed on L1 and receive them through a Reactive Faucet Listener contract deployed on the Reactive Network.
+The [Reactive Faucet](https://dev.reactive.network/docs/kopli-testnet) is a system that operates between L1 (or any other layer) and the Reactive Network. It enables users to request funds from a faucet contract deployed on L1 and receive them through a Reactive Faucet Listener contract deployed on the Reactive Network.
 
 The flowchart legend:
 
@@ -16,7 +16,7 @@ The flowchart legend:
 
 * Reactive Node: Reacts to Layer 1 events and triggers callbacks to `ReactiveFaucetListener`.
 
-* `ReactiveFaucetL1`: Initiates and processes payment requests, as well as receives transferred funds from the`ReactiveFaucetListener` contract.
+* `ReactiveFaucetL1`: Initiates and processes payment requests, as well as receives transferred funds from the `ReactiveFaucetListener` contract.
 
 ```mermaid
 %%{ init: { 'flowchart': { 'curve': 'basis' } } }%%
@@ -75,7 +75,7 @@ The `ReactiveFaucetListener` contract deployed on the Reactive Network listens f
 
 ## Further Considerations
 
-While the demo provides a functional Reactive Faucet system, there are several areas for further improvement and refinement:
+The Reactive Faucet system has several areas for further improvement and refinement:
 
 * Enhanced Security Measures: Implement additional security checks and access control mechanisms to prevent unauthorized access and ensure the safety of funds.
 
