@@ -2,7 +2,7 @@
 
 ## Overview
 
-The [Reactive Faucet](https://dev.reactive.network/docs/kopli-testnet) is a system that operates between L1 (or any other layer) and the Reactive Network. It enables users to request funds from a faucet contract deployed on L1 and receive them through a Reactive Faucet Listener contract deployed on the Reactive Network.
+The [Reactive Faucet](https://dev.reactive.network/docs/kopli-testnet) is a system that operates between L1 (or any other layer) and the Reactive Network. It enables users to request funds from a faucet contract deployed on L1 and receive them through the `ReactiveFaucetListener` contract deployed on the Reactive Network.
 
 The flowchart legend:
 
@@ -47,14 +47,6 @@ flowchart TD;
 
 ## Origin Chain Contract
 
-The `ReactiveFaucet` contract on L1 acts as the source of funds for the Reactive Faucet system. It allows the owner to set a maximum payout limit and facilitates fund transfers to recipients. Key functionalities include:
-
-* Dispensing Funds: The dispense function allows the Reactive Faucet Listener contract on the Reactive Network to request fund transfers to specified recipients within the maximum payout limit.
-
-* Configuration Management: The contract enables the owner to manage the maximum payout limit, the callback sender address, and the address of the Reactive Faucet Listener contract.
-
-## Reactive Contract
-
 The `ReactiveFaucetL1` contract serves as the faucet on the L1 chain. It allows users to request funds and withdraw funds as needed. Key functionalities include:
 
 * Payment Request Event: The contract emits a PaymentRequest event when a user requests funds.
@@ -63,7 +55,7 @@ The `ReactiveFaucetL1` contract serves as the faucet on the L1 chain. It allows 
 
 * Withdrawal Mechanism: The contract allows the owner to withdraw funds from the faucet as needed.
 
-## Destination Chain Contract
+## Reactive Contract
 
 The `ReactiveFaucetListener` contract deployed on the Reactive Network listens for payment requests initiated by the Reactive Faucet contract on L1. It facilitates the transfer of funds from the L1 faucet to designated recipients on the Reactive Network. Key functionalities include:
 
@@ -73,9 +65,19 @@ The `ReactiveFaucetListener` contract deployed on the Reactive Network listens f
 
 * Pause and Resume Mechanism: The contract provides functionality to pause and resume event subscriptions to manage its responsiveness.
 
+## Destination Chain Contract
+
+The `ReactiveFaucet` contract acts as the source of funds for the Reactive Faucet system. It allows the owner to set a maximum payout limit and facilitates fund transfers to recipients.
+
+Key functionalities include:
+
+* Dispensing Funds: The dispense function allows the Reactive Faucet Listener contract on the Reactive Network to request fund transfers to specified recipients within the maximum payout limit.
+
+* Configuration Management: The contract enables the owner to manage the maximum payout limit, the callback sender address, and the address of the Reactive Faucet Listener contract.
+
 ## Further Considerations
 
-The Reactive Faucet system has several areas for further improvement and refinement:
+The Reactive Faucet system has several areas for further improvement:
 
 * Enhanced Security Measures: Implement additional security checks and access control mechanisms to prevent unauthorized access and ensure the safety of funds.
 
@@ -87,7 +89,7 @@ The Reactive Faucet system has several areas for further improvement and refinem
 
 ## Deployment & Testing
 
-You will need the following environment variables configured appropriately to follow this script:
+This script guides you through deploying and testing the Reactive Faucet demo on the Sepolia Testnet. Ensure the following environment variables are configured appropriately before proceeding with this scrip:
 
 * `SEPOLIA_RPC`
 * `SEPOLIA_PRIVATE_KEY`
@@ -97,44 +99,46 @@ You will need the following environment variables configured appropriately to fo
 * `SYSTEM_CONTRACT_ADDR`
 * `CALLBACK_SENDER_ADDR`
 
-First deploy the L1 contract to Sepolia:
+### Step 1
 
-```
+Deploy the `ReactiveFaucetL1` contract to Sepolia and assign the `Deployed to` address from the response to `REACTIVE_FAUCET_L1_ADDR`. You can use the recommended Sepolia RPC URL: `https://rpc2.sepolia.org`.
+
+```bash
 forge create --rpc-url $SEPOLIA_RPC --private-key $SEPOLIA_PRIVATE_KEY src/faucet/ReactiveFaucetL1.sol:ReactiveFaucetL1 --constructor-args 1ether
 ```
 
-Assign the deployed contract address to the `REACTIVE_FAUCET_L1_ADDR` environment variable.
+### Step 2
 
-Now deploy the faucet itself to Reactive Network:
+Deploy the `ReactiveFaucet` contract to the Reactive Network and assign the `Deployed to` address from the response to `REACTIVE_FAUCET_ADDR`.
 
-```
+```bash
 forge create --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY src/faucet/ReactiveFaucet.sol:ReactiveFaucet --constructor-args $CALLBACK_SENDER_ADDR 1ether
 ```
 
-Assign the contract address to `REACTIVE_FAUCET_ADDR`.
+### Step 3
 
-Lastly, deploy the listener contract:
+Deploy the `ReactiveFaucetListener` contract to the Reactive Network and assign the `Deployed to` contract address from the response to `REACTIVE_FAUCET_LISTENER_ADDR`.
 
-```
+```bash
 forge create --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY src/faucet/ReactiveFaucetListener.sol:ReactiveFaucetListener --constructor-args $SYSTEM_CONTRACT_ADDR $REACTIVE_FAUCET_L1_ADDR $REACTIVE_FAUCET_ADDR
 ```
 
-Assign the contract address to `REACTIVE_FAUCET_LISTENER_ADDR`.
+### Step 4
 
-Finish the faucet configuration:
+Complete the faucet configuration:
 
-```
+```bash
 cast send $REACTIVE_FAUCET_ADDR "setReactive(address)" --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY $DEPLOYER_ADDR
 ```
 
 Provide some liquidity:
 
-```
+```bash
 cast send $REACTIVE_FAUCET_ADDR --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY --value 5ether
 ```
 
-And test:
+Test the faucet:
 
-```
+```bash
 cast send $REACTIVE_FAUCET_L1_ADDR --rpc-url $SEPOLIA_RPC --private-key $SEPOLIA_PRIVATE_KEY --value 0.1ether
 ```
