@@ -1,91 +1,44 @@
-# Reactive Faucet
+# Reactive Faucet Demo
 
 ## Overview
 
-The [Reactive Faucet](https://dev.reactive.network/docs/kopli-testnet) is a system that operates between L1 (or any other layer) and the Reactive Network. It enables users to request funds from a faucet contract deployed on L1 and receive them through the `ReactiveFaucetListener` contract deployed on the Reactive Network.
-
-The flowchart legend:
-
-* Owner: Manages faucet configuration and funds. Initiates and processes payment requests through `ReactiveFaucetL1`.
-
-* Faucet: Provides funds upon request.
-
-* `ReactiveFaucetListener`: Listens for payment requests from the Faucet and handles callbacks and fund transfers between layers.
-
-* Subscription Service: Manages event subscriptions between layers.
-
-* Reactive Node: Reacts to Layer 1 events and triggers callbacks to `ReactiveFaucetListener`.
-
-* `ReactiveFaucetL1`: Initiates and processes payment requests, as well as receives transferred funds from the `ReactiveFaucetListener` contract.
-
-```mermaid
-%%{ init: { 'flowchart': { 'curve': 'basis' } } }%%
-flowchart TD;
-    subgraph "Layer 1"
-    subgraph "ReactiveFaucetL1"
-    A(Owner) -.->|Configures Faucet| B(ReactiveFaucetL1)
-    B -.->|Requests Funds| C((Faucet))
-    C -.->|Sends `PaymentRequest` Event| B
-    B -.->|Withdraws Funds| A
-    end
-    end
-
-    subgraph "Reactive Network"
-    subgraph "ReactiveFaucetListener"
-    D(Owner) -.->|Deploys| E(ReactiveFaucetListener)
-    E -.->|Subscribes to `PaymentRequest` Events| F((Subscription Service))
-    F -.->|Subscribes to L1 Events| G((Reactive Node))
-    end
-
-    subgraph "Reactive Node"
-    G -.->|Reacts to `PaymentRequest` Events| H(ReactiveFaucetListener)
-    H -.->|Triggers Callback| I((ReactiveFaucetL1))
-    I -.->|Transfers Funds| H
-    end
-    end
-```
+The Reactive Faucet is a system that operates between L1 (or any other layer) and the Reactive Network. This demo enables users to request funds from a faucet contract deployed on L1 and receive them through the `ReactiveFaucetListener` contract deployed on the Reactive Network.
 
 ## Origin Chain Contract
 
-The `ReactiveFaucetL1` contract serves as the faucet on the L1 chain. It allows users to request funds and withdraw funds as needed. Key functionalities include:
+The `ReactiveFaucetL1` contract is designed to handle payment requests and facilitate fund distribution the blockchain. It allows users to request payments and defines a maximum payout limit for each request. The contract emits a `PaymentRequest` event whenever a payment request is made, specifying the receiver and the amount. Ownership of the contract is restricted to a single address, set during deployment, and only the owner can perform specific actions such as withdrawing funds or setting the maximum payout limit.
 
-* Payment Request Event: The contract emits a PaymentRequest event when a user requests funds.
+The contract can accept Ether through its `receive` function, which processes incoming payment requests. Users can also directly call the `request` function to request a payout, subject to the maximum payout limit. The owner can withdraw funds from the contract using the `withdraw` function, provided there are sufficient funds available. Additionally, the owner can update the maximum payout limit by calling the `setMaxPayout` function.
 
-* Fund Management: Users can request funds from the faucet, and the contract ensures that the requested amount does not exceed the maximum payout limit set by the owner.
-
-* Withdrawal Mechanism: The contract allows the owner to withdraw funds from the faucet as needed.
+The `_request` internal function handles the logic for processing payment requests. It ensures that the requested amount does not exceed the maximum payout and that the amount is greater than zero before emitting the `PaymentRequest` event.
 
 ## Reactive Contract
 
-The `ReactiveFaucetListener` contract deployed on the Reactive Network listens for payment requests initiated by the Reactive Faucet contract on L1. It facilitates the transfer of funds from the L1 faucet to designated recipients on the Reactive Network. Key functionalities include:
+The `ReactiveFaucetListener` contract facilitates interaction between the Reactive Network and the Sepolia chain by subscribing to specific events and handling callbacks. It monitors `PaymentRequest` events on the Sepolia chain and triggers corresponding actions on the Reactive Network.
 
-* Subscription to L1 Events: The contract subscribes to payment request events emitted by the Reactive Faucet contract on L1.
+The contract is initialized with the addresses of the service, the Layer 1 contract, and the faucet contract. Upon deployment, it subscribes to `PaymentRequest` events on the Sepolia chain. The contract includes functionality to pause and resume its operations, which involves unsubscribing and resubscribing to the monitored events.
 
-* Reacting to Events: Upon receiving a payment request event, the contract triggers a callback to the L1 faucet to initiate fund transfer to the specified recipient.
-
-* Pause and Resume Mechanism: The contract provides functionality to pause and resume event subscriptions to manage its responsiveness.
+The `react` function processes events, specifically handling `PaymentRequest` topics by preparing a callback payload to dispense funds via the faucet contract. The contract ensures that only the owner can pause or resume its operations, and it enforces separate execution paths for the Reactive Network and ReactVM instances.
 
 ## Destination Chain Contract
 
-The `ReactiveFaucet` contract acts as the source of funds for the Reactive Faucet system. It allows the owner to set a maximum payout limit and facilitates fund transfers to recipients.
+The `ReactiveFaucet` contract manages the distribution of funds on the Reactive Network based on external requests. The contract is initialized with the address of a callback sender and a maximum payout limit. It maintains strict control over fund distribution to ensure security and proper authorization.
 
-Key functionalities include:
+The contract designates the deployer as the owner, who can update the reactive address, callback sender address, and the maximum payout limit. Fund distribution is handled through the `dispense` function, which verifies that the request comes from the authorized callback sender and matches the reactive address. The function ensures the requested amount does not exceed the maximum payout and that sufficient funds are available.
 
-* Dispensing Funds: The dispense function allows the Reactive Faucet Listener contract on the Reactive Network to request fund transfers to specified recipients within the maximum payout limit.
-
-* Configuration Management: The contract enables the owner to manage the maximum payout limit, the callback sender address, and the address of the Reactive Faucet Listener contract.
+The contract also includes a fallback function `receive` to receive funds. This ensures that the faucet can be replenished as needed. The overall structure emphasizes secure and controlled fund distribution within the Reactive Network environment.
 
 ## Further Considerations
 
-The Reactive Faucet system has several areas for further improvement:
+The Reactive Faucet system can be further improved in several areas:
 
-* Enhanced Security Measures: Implement additional security checks and access control mechanisms to prevent unauthorized access and ensure the safety of funds.
+- Security Enhancements: Strengthen access control and implement security checks to safeguard funds and prevent unauthorized access.
 
-* Optimization for Gas Efficiency: Optimize contract functions and interactions to minimize gas costs and improve overall efficiency.
+- Gas Optimization: Refine contract functions to reduce gas costs.
 
-* Error Handling: Implement robust error handling mechanisms to handle exceptional scenarios and edge cases gracefully.
+- Error Handling: Develop error handling to manage exceptions and edge cases.
 
-* Integration with External Systems: Explore opportunities to integrate the Reactive Faucet system with other DeFi protocols or applications to enhance its utility and functionality.
+- External Integration: Integrate with other DeFi protocols and applications to expand functionality and utility.
 
 ## Deployment & Testing
 
