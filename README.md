@@ -1,8 +1,8 @@
-# Reactive Faucet Demo
+# Reactive Faucet App
 
 ## Overview
 
-The Reactive Faucet is a system that operates between L1 (or any other layer) and the Reactive Network. This demo enables users to request funds from a faucet contract deployed on L1 and receive them through the `ReactiveFaucetListener` contract deployed on the Reactive Network.
+The Reactive Faucet App is a system that operates between L1 (or any other layer) and the Reactive Network. This demo enables users to request funds from a faucet contract deployed on L1 and receive them through the `ReactiveFaucetListener` contract deployed on the Reactive Network.
 
 ## Origin Chain Contract
 
