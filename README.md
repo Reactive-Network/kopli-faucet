@@ -52,9 +52,11 @@ This script guides you through deploying and testing the Reactive Faucet demo on
 * `SYSTEM_CONTRACT_ADDR`
 * `CALLBACK_SENDER_ADDR`
 
+`DEPLOYER_ADDR` is also your RVM ID. `CALLBACK_SENDER_ADDR` is a fixed EOA address, specific to each network, used by the reactive network to generate transaction callbacks. You can use the recommended Sepolia RPC URL: `https://rpc2.sepolia.org`.
+
 ### Step 1
 
-Deploy the `ReactiveFaucetL1` contract to Sepolia and assign the `Deployed to` address from the response to `REACTIVE_FAUCET_L1_ADDR`. You can use the recommended Sepolia RPC URL: `https://rpc2.sepolia.org`.
+Deploy the `ReactiveFaucetL1` contract to Sepolia and assign the `Deployed to` address from the response to `REACTIVE_FAUCET_L1_ADDR`.
 
 ```bash
 forge create --rpc-url $SEPOLIA_RPC --private-key $SEPOLIA_PRIVATE_KEY src/faucet/ReactiveFaucetL1.sol:ReactiveFaucetL1 --constructor-args 1ether
