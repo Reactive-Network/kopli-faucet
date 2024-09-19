@@ -19,18 +19,13 @@ This script guides you through deploying and testing the Reactive Faucet demo on
 * `SEPOLIA_RPC`
 * `SEPOLIA_PRIVATE_KEY`
 * `REACTIVE_RPC`
-* `REACTIVE_PRIVATE_KEY`
-* `DEPLOYER_ADDR`
+* `REACTIVE_PRIVATE_KEY
 
-[//]: # (* `CALLBACK_PROXY_ADDR`)
-
-[//]: # ()
-[//]: # (`DEPLOYER_ADDR` is your RVM ID. `CALLBACK_PROXY_ADDR` is a fixed EOA address, specific to each network, used by the Reactive Network to generate transaction callbacks.)
 You can use the recommended Sepolia RPC URL: `https://rpc2.sepolia.org`.
 
 ### Step 1
 
-Deploy the `ReactiveFaucetL1` contract to Sepolia and assign the `Deployed to` address from the response to `REACTIVE_FAUCET_L1_ADDR`.
+Deploy the `ReactiveFaucetL1` contract to Sepolia and assign the `Deployed to` address from the response to `REACTIVE_FAUCET_L1_ADDR`. Alternatively, you can export the pre-deployed `REACTIVE_FAUCET_L1_ADDR` on Sepolia, which is `0x9b9BB25f1A81078C544C829c5EB7822d747Cf434`.
 
 ```bash
 forge create --rpc-url $SEPOLIA_RPC --private-key $SEPOLIA_PRIVATE_KEY src/faucet/ReactiveFaucetL1.sol:ReactiveFaucetL1 --constructor-args 1ether
@@ -46,20 +41,8 @@ forge create --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY src/fau
 
 ### Step 3
 
-Complete the faucet configuration:
-
-```bash
-cast send $REACTIVE_FAUCET_ADDR "setReactive(address)" --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY $DEPLOYER_ADDR
-```
-
-Provide some liquidity:
-
-```bash
-cast send $REACTIVE_FAUCET_ADDR --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY --value 5ether
-```
-
 Test the faucet:
 
 ```bash
-cast send $REACTIVE_FAUCET_L1_ADDR --rpc-url $SEPOLIA_RPC --private-key $SEPOLIA_PRIVATE_KEY --value 0.1ether
+cast send $REACTIVE_FAUCET_L1_ADDR --rpc-url $SEPOLIA_RPC --private-key $SEPOLIA_PRIVATE_KEY --value 0.01ether
 ```
