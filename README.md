@@ -47,7 +47,7 @@ Test the faucet:
 cast send $REACTIVE_FAUCET_L1_ADDR --rpc-url $SEPOLIA_RPC --private-key $SEPOLIA_PRIVATE_KEY --value 0.01ether
 ```
 
-### Step 4
+### Optional Steps
 
 To pause the reactive contract, run the command below:
 
