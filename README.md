@@ -19,7 +19,7 @@ This script guides you through deploying and testing the Reactive Faucet demo on
 * `SEPOLIA_RPC`
 * `SEPOLIA_PRIVATE_KEY`
 * `REACTIVE_RPC`
-* `REACTIVE_PRIVATE_KEY
+* `REACTIVE_PRIVATE_KEY`
 
 You can use the recommended Sepolia RPC URL: `https://rpc2.sepolia.org`.
 
@@ -45,4 +45,24 @@ Test the faucet:
 
 ```bash
 cast send $REACTIVE_FAUCET_L1_ADDR --rpc-url $SEPOLIA_RPC --private-key $SEPOLIA_PRIVATE_KEY --value 0.01ether
+```
+
+### Step 4
+
+To pause the reactive contract, run the command below:
+
+```bash
+cast send $REACTIVE_FAUCET_ADDR "pause()" --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY
+```
+
+To resume the reactive contract, run the following command: 
+
+```bash
+cast send $REACTIVE_FAUCET_ADDR "resume()" --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY
+```
+
+Provide additional funds to the reactive contract if needed:
+
+```bash
+cast send $REACTIVE_FAUCET_ADDR --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY --value 0.1ether
 ```
