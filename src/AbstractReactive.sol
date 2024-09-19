@@ -28,7 +28,7 @@ abstract contract AbstractReactive is IReactive, AbstractPayer {
     }
 
     modifier vmOnly() {
-        require(vm, 'VM only');
+//        require(vm, 'VM only');
         _;
     }
 
