@@ -25,7 +25,7 @@ To deploy the contracts to Ethereum Sepolia and Kopli Testnet, follow these step
 export REACTIVE_FAUCET_L1_ADDR=0x9b9BB25f1A81078C544C829c5EB7822d747Cf434
 ```
 
-Find more information on Kopli Testnet faucet addresss [here](https://dev.reactive.network/kopli-testnet#kopli-testnet-information).
+Find more information on Kopli Testnet faucet address [here](https://dev.reactive.network/kopli-testnet#kopli-testnet-information).
 
 Deploy the `ReactiveFaucetL1` contract to Ethereum Sepolia and assign the `Deployed to` address from the response to `REACTIVE_FAUCET_L1_ADDR`. You can skip this step and export the pre-deployed `REACTIVE_FAUCET_L1_ADDR` for Ethereum Sepolia shown above.
 
