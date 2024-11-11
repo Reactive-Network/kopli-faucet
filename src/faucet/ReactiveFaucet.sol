@@ -2,8 +2,8 @@
 
 pragma solidity >=0.8.0;
 
-import '../AbstractCallback.sol';
-import '../AbstractPausableReactive.sol';
+import '../../lib/reactive-lib/src/abstract-base/AbstractCallback.sol';
+import '../../lib/reactive-lib/src/abstract-base/AbstractPausableReactive.sol';
 
 contract ReactiveFaucet is AbstractPausableReactive, AbstractCallback {
     uint256 private constant SEPOLIA_CHAIN_ID = 11155111;
@@ -54,8 +54,6 @@ contract ReactiveFaucet is AbstractPausableReactive, AbstractCallback {
         );
         return result;
     }
-
-    receive() external payable {}
 
     function dispense(address sender, address payable receiver, uint256 amount) external onlyReactive(sender) {
         require(amount <= max_payout, 'Max payout exceeded');
