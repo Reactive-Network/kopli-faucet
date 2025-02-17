@@ -57,7 +57,7 @@ To pause the reactive contract:
 cast send $REACTIVE_FAUCET_ADDR "pause()" --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY
 ```
 
-To resume the reactive contract: 
+To resume the reactive contract:
 
 ```bash
 cast send $REACTIVE_FAUCET_ADDR "resume()" --rpc-url $REACTIVE_RPC --private-key $REACTIVE_PRIVATE_KEY

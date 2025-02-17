@@ -7,7 +7,6 @@ import '../../lib/reactive-lib/src/abstract-base/AbstractPausableReactive.sol';
 
 contract ReactiveFaucet is AbstractPausableReactive, AbstractCallback {
     uint256 private constant SEPOLIA_CHAIN_ID = 11155111;
-    uint256 private constant REACTIVE_CHAIN_ID = 0x512578;
 
     uint256 private constant PAYMENT_REQUEST_TOPIC_0 = 0x8e191feb68ec1876759612d037a111be48d8ec3db7f72e4e7d321c2c8008bd0d;
 
@@ -74,6 +73,6 @@ contract ReactiveFaucet is AbstractPausableReactive, AbstractCallback {
             address(uint160(log.topic_1)),
             log.topic_2 / 10
         );
-        emit Callback(REACTIVE_CHAIN_ID, address(this), CALLBACK_GAS_LIMIT, payload);
+        emit Callback(block.chainid, address(this), CALLBACK_GAS_LIMIT, payload);
     }
 }
