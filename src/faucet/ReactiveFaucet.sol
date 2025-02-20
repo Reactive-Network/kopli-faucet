@@ -7,7 +7,6 @@ import '../../lib/reactive-lib/src/abstract-base/AbstractPausableReactive.sol';
 
 contract ReactiveFaucet is AbstractPausableReactive, AbstractCallback {
     uint256 private constant SEPOLIA_CHAIN_ID = 11155111;
-    uint256 private constant REACTIVE_CHAIN_ID = 0x512578;
 
     uint256 private constant PAYMENT_REQUEST_TOPIC_0 = 0x8e191feb68ec1876759612d037a111be48d8ec3db7f72e4e7d321c2c8008bd0d;
 
@@ -67,23 +66,13 @@ contract ReactiveFaucet is AbstractPausableReactive, AbstractCallback {
 
     // Methods specific to ReactVM contract instance
 
-    function react(
-        uint256 /* chain_id */,
-        address /* _contract */,
-        uint256 /* topic_0 */,
-        uint256 topic_1,
-        uint256 topic_2,
-        uint256 /* topic_3 */,
-        bytes calldata /* data */,
-        uint256 /* block_number */,
-        uint256 /* op_code */
-    ) external vmOnly {
+    function react(LogRecord calldata log) external vmOnly {
         bytes memory payload = abi.encodeWithSignature(
             "dispense(address,address,uint256)",
             address(0),
-            address(uint160(topic_1)),
-            topic_2 / 10
+            address(uint160(log.topic_1)),
+            log.topic_2 / 10
         );
-        emit Callback(REACTIVE_CHAIN_ID, address(this), CALLBACK_GAS_LIMIT, payload);
+        emit Callback(block.chainid, address(this), CALLBACK_GAS_LIMIT, payload);
     }
 }
