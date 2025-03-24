@@ -9,6 +9,7 @@ contract ReactiveFaucet is AbstractPausableReactive, AbstractCallback {
 
     uint256 private constant SEPOLIA_CHAIN_ID = 11155111;
     uint256 private constant PAYMENT_REQUEST_TOPIC_0 = 0x8e191feb68ec1876759612d037a111be48d8ec3db7f72e4e7d321c2c8008bd0d;
+    uint256 private constant EXCHANGE_RATE_FACTOR = 10000;
     uint64 private constant CALLBACK_GAS_LIMIT = 1000000;
 
     // State specific to ReactVM contract instance
@@ -41,10 +42,25 @@ contract ReactiveFaucet is AbstractPausableReactive, AbstractCallback {
         _;
     }
 
+    function getPausableSubscriptions() override internal view returns (Subscription[] memory) {
+        Subscription[] memory result = new Subscription[](1);
+        result[0] = Subscription(
+            SEPOLIA_CHAIN_ID,
+            l1,
+            PAYMENT_REQUEST_TOPIC_0,
+            REACTIVE_IGNORE,
+            REACTIVE_IGNORE,
+            REACTIVE_IGNORE
+        );
+        return result;
+    }
+
     function dispense(address sender, address payable receiver, uint256 amount) external onlyReactive(sender) {
-        uint256 adjustedAmount = (amount * exchangeRate) / 1e18; // Apply exchange rate
+        uint256 adjustedAmount = (amount * exchangeRate) / EXCHANGE_RATE_FACTOR;
+
         require(adjustedAmount <= max_payout, 'Max payout exceeded');
         require(adjustedAmount <= address(this).balance, 'Not enough funds');
+
         receiver.transfer(adjustedAmount);
     }
 
@@ -59,13 +75,13 @@ contract ReactiveFaucet is AbstractPausableReactive, AbstractCallback {
     // Methods specific to ReactVM contract instance
 
     function react(LogRecord calldata log) external vmOnly {
-        uint256 adjustedAmount = (log.topic_2 * exchangeRate) / (10 * 1e18);
+        uint256 adjustedAmount = (log.topic_2 * exchangeRate) / (10 * EXCHANGE_RATE_FACTOR);
 
         bytes memory payload = abi.encodeWithSignature(
             "dispense(address,address,uint256)",
             address(0),
             address(uint160(log.topic_1)),
-            log.topic_2 / 10
+            adjustedAmount
         );
         emit Callback(block.chainid, address(this), CALLBACK_GAS_LIMIT, payload);
     }
