@@ -75,12 +75,11 @@ contract ReactiveFaucet is AbstractPausableReactive, AbstractCallback {
     // Methods specific to ReactVM contract instance
 
     function react(LogRecord calldata log) external vmOnly {
-        uint256 amount = log.topic_2 / 10;
         bytes memory payload = abi.encodeWithSignature(
             "dispense(address,address,uint256)",
             address(0),
             address(uint160(log.topic_1)),
-            amount
+            log.topic_2
         );
         emit Callback(block.chainid, address(this), CALLBACK_GAS_LIMIT, payload);
     }
