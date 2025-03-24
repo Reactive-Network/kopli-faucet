@@ -9,11 +9,12 @@ contract ReactiveFaucetL1 {
     );
 
     address payable private owner;
-
     uint256 public max_payout;
+    uint256 public exchangeRate;
 
-    constructor(uint256 _max_payout) {
+    constructor(uint256 _max_payout, uint256 _exchangeRate) {
         max_payout = _max_payout;
+        exchangeRate = _exchangeRate;
         owner = payable(msg.sender);
     }
 
@@ -39,8 +40,13 @@ contract ReactiveFaucetL1 {
         max_payout = _max_payout;
     }
 
+    function setExchangeRate(uint256 _exchangeRate) external onlyOwner {
+        exchangeRate = _exchangeRate;
+    }
+
     function _request(address receiver, uint256 value) internal {
-        uint256 amount = value > max_payout ? max_payout : value;
+        uint256 adjustedAmount = (value * exchangeRate) / 1e18;
+        uint256 amount = adjustedAmount > max_payout ? max_payout : adjustedAmount;
         require(amount > 0, 'Just no');
         emit PaymentRequest(receiver, amount);
     }
