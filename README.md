@@ -36,7 +36,7 @@ forge create --rpc-url $SEPOLIA_RPC --private-key $SEPOLIA_PRIVATE_KEY src/fauce
 ### Step 2
 
 ```bash
-export REACTIVE_FAUCET_L1_ADDR=0x51eF3b2505aeAC05518457A24ed2F8849A64638F
+export REACTIVE_FAUCET_ADDR=0x51eF3b2505aeAC05518457A24ed2F8849A64638F
 ```
 
 Deploy the `ReactiveFaucet` contract to the Reactive Network and assign the `Deployed to` address from the response to `REACTIVE_FAUCET_ADDR`.
